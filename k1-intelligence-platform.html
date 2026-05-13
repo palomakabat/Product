@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>K1 Intelligence Platform — AI Operational Intelligence</title>
+  <meta name="description" content="Transform fragmented operational signals into coordinated, executable, and traceable delivery. Enterprise AI platform for command centers, public safety, and operational teams." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #08090d;
+      --surface: #0f1117;
+      --surface2: #161820;
+      --border: #1e2030;
+      --accent: #6366f1;
+      --accent2: #818cf8;
+      --accent-glow: rgba(99,102,241,0.15);
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: rgba(8,9,13,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px;
+    }
+    .nav-logo {
+      font-weight: 700; font-size: 1.1rem; letter-spacing: -0.02em;
+      color: var(--text);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .nav-logo span { color: var(--accent2); }
+    .nav-badge {
+      font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em;
+      background: var(--accent-glow); border: 1px solid var(--accent);
+      color: var(--accent2); padding: 2px 8px; border-radius: 20px;
+    }
+    .nav-links { display: flex; gap: 2rem; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--accent); color: #fff; border: none;
+      padding: 8px 20px; border-radius: 8px; font-size: 0.875rem;
+      font-weight: 600; cursor: pointer; transition: background 0.2s;
+      text-decoration: none;
+    }
+    .nav-cta:hover { background: var(--accent2); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center;
+      padding: 120px 2rem 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.35;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 100%);
+    }
+    .hero-glow {
+      position: absolute; top: 20%; left: 50%; transform: translateX(-50%);
+      width: 700px; height: 400px;
+      background: radial-gradient(ellipse, rgba(99,102,241,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 20px; padding: 6px 16px;
+      font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em;
+      color: var(--accent2); margin-bottom: 2rem;
+      position: relative;
+    }
+    .hero-tag::before {
+      content: ''; width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green); display: inline-block;
+      box-shadow: 0 0 8px var(--green);
+    }
+    h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 800; letter-spacing: -0.04em; line-height: 1.08;
+      position: relative; margin-bottom: 1.5rem;
+    }
+    h1 .highlight {
+      background: linear-gradient(135deg, var(--accent2) 0%, #c084fc 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem); color: var(--muted);
+      max-width: 600px; margin: 0 auto 2.5rem; line-height: 1.7;
+      position: relative;
+    }
+    .hero-actions {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+      position: relative;
+    }
+    .btn-primary {
+      background: var(--accent); color: #fff; border: none;
+      padding: 14px 32px; border-radius: 10px; font-size: 0.95rem;
+      font-weight: 600; cursor: pointer; transition: all 0.2s;
+      text-decoration: none; display: inline-block;
+    }
+    .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+    .btn-secondary {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border);
+      padding: 14px 32px; border-radius: 10px; font-size: 0.95rem;
+      font-weight: 600; cursor: pointer; transition: all 0.2s;
+      text-decoration: none; display: inline-block;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent2); }
+
+    .hero-stats {
+      display: flex; gap: 3rem; justify-content: center; flex-wrap: wrap;
+      margin-top: 5rem; position: relative;
+    }
+    .stat { text-align: center; }
+    .stat-num { font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text); }
+    .stat-label { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+
+    /* ── SECTIONS ── */
+    section { padding: 100px 2rem; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em;
+      color: var(--accent2); text-transform: uppercase; margin-bottom: 1rem;
+    }
+    h2 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800; letter-spacing: -0.03em; margin-bottom: 1rem;
+    }
+    .section-sub {
+      color: var(--muted); font-size: 1.05rem; max-width: 560px; line-height: 1.7;
+    }
+
+    /* ── PROBLEM ── */
+    .problem-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1px; background: var(--border); border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden; margin-top: 3rem;
+    }
+    .problem-cell {
+      background: var(--surface); padding: 1.5rem;
+      display: flex; flex-direction: column; gap: 0.5rem;
+    }
+    .problem-title { font-weight: 600; font-size: 0.95rem; }
+    .problem-desc { font-size: 0.83rem; color: var(--muted); }
+    .tag-bad {
+      display: inline-block; font-size: 0.7rem; font-weight: 700;
+      background: rgba(239,68,68,0.12); color: var(--red);
+      border: 1px solid rgba(239,68,68,0.25); border-radius: 4px;
+      padding: 2px 8px; width: fit-content;
+    }
+
+    /* ── PILLARS ── */
+    .pillars { background: var(--surface); }
+    .pillars-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem; margin-top: 3rem;
+    }
+    .pillar-card {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.5rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .pillar-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .pillar-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+    .pillar-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.4rem; }
+    .pillar-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+    /* ── WORKFLOW ── */
+    .workflow-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start;
+      margin-top: 3rem;
+    }
+    .workflow-steps { display: flex; flex-direction: column; gap: 0; }
+    .workflow-step {
+      display: flex; gap: 1.25rem; padding: 1.25rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .workflow-step:last-child { border-bottom: none; }
+    .step-num {
+      flex-shrink: 0; width: 32px; height: 32px;
+      background: var(--accent-glow); border: 1px solid var(--accent);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700; color: var(--accent2);
+    }
+    .step-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.25rem; }
+    .step-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+    .code-block {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+    }
+    .code-header {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.8rem; color: var(--muted);
+    }
+    .code-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+    pre {
+      padding: 1.25rem; font-family: var(--mono);
+      font-size: 0.78rem; line-height: 1.7;
+      color: #94a3b8; overflow-x: auto;
+    }
+    .c-accent { color: var(--accent2); }
+    .c-green { color: var(--green); }
+    .c-amber { color: var(--amber); }
+    .c-muted { color: var(--muted); }
+
+    /* ── AGENTS ── */
+    .agents { background: var(--surface); }
+    .agents-diagram {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 16px; padding: 2.5rem; margin-top: 3rem;
+      font-family: var(--mono); font-size: 0.8rem; line-height: 1.8;
+      overflow-x: auto;
+    }
+    .agent-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem; margin-top: 2rem;
+    }
+    .agent-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.25rem;
+    }
+    .agent-name {
+      font-weight: 700; font-size: 0.85rem; color: var(--accent2);
+      margin-bottom: 0.4rem; font-family: var(--mono);
+    }
+    .agent-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+    /* ── STACK ── */
+    .stack-table {
+      width: 100%; border-collapse: collapse; margin-top: 2.5rem;
+      font-size: 0.875rem;
+    }
+    .stack-table th {
+      text-align: left; padding: 0.75rem 1rem; font-size: 0.75rem;
+      font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); border-bottom: 1px solid var(--border);
+    }
+    .stack-table td {
+      padding: 1rem; border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .stack-table tr:last-child td { border-bottom: none; }
+    .stack-table tr:hover td { background: var(--surface2); }
+    .tech-tag {
+      display: inline-block; font-size: 0.75rem; font-weight: 600;
+      background: var(--accent-glow); border: 1px solid rgba(99,102,241,0.3);
+      color: var(--accent2); border-radius: 4px; padding: 2px 8px;
+    }
+    .rationale { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+    /* ── ROADMAP ── */
+    .roadmap-list { display: flex; flex-direction: column; gap: 1px; margin-top: 3rem; }
+    .roadmap-phase {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.5rem 2rem;
+      display: flex; gap: 2rem; align-items: flex-start;
+    }
+    .phase-num {
+      flex-shrink: 0; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
+      color: var(--accent2); background: var(--accent-glow);
+      border: 1px solid rgba(99,102,241,0.3); border-radius: 6px;
+      padding: 4px 10px; margin-top: 2px;
+    }
+    .phase-title { font-weight: 700; margin-bottom: 0.4rem; }
+    .phase-items {
+      display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;
+    }
+    .phase-item {
+      font-size: 0.75rem; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 4px;
+      padding: 3px 10px; color: var(--muted);
+    }
+    .phase-mvp .phase-num { color: var(--green); background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); }
+    .phase-mvp { border-color: rgba(16,185,129,0.2); }
+
+    /* ── CTA ── */
+    .cta-section {
+      text-align: center; background: var(--surface);
+      position: relative; overflow: hidden;
+    }
+    .cta-glow {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 600px; height: 300px;
+      background: radial-gradient(ellipse, rgba(99,102,241,0.1) 0%, transparent 70%);
+    }
+    .cta-section h2 { position: relative; }
+    .cta-section p { color: var(--muted); margin: 1rem auto 2.5rem; max-width: 480px; position: relative; }
+    .cta-section .hero-actions { position: relative; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border); padding: 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+      font-size: 0.82rem; color: var(--muted);
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .workflow-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 2rem; }
+      .roadmap-phase { flex-direction: column; gap: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-logo">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    K1 <span>Intelligence</span>
+    <span class="nav-badge">MVP v1.0</span>
+  </div>
+  <div class="nav-links">
+    <a href="#problem">Problem</a>
+    <a href="#pillars">Pillars</a>
+    <a href="#workflow">Workflow</a>
+    <a href="#agents">Agents</a>
+    <a href="#stack">Stack</a>
+    <a href="#roadmap">Roadmap</a>
+  </div>
+  <a href="#cta" class="nav-cta">Request Access</a>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+
+  <div class="hero-tag">AI Operational Intelligence Platform</div>
+
+  <h1>
+    Transform fragmented operations<br />
+    into <span class="highlight">coordinated delivery</span>
+  </h1>
+
+  <p class="hero-sub">
+    K1 Intelligence Platform unifies incident management, requirements discovery,
+    AI-generated PRDs, story hierarchies, and Jira synchronization — all powered
+    by a multi-agent AI reasoning layer.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#workflow" class="btn-primary">See How It Works</a>
+    <a href="https://github.com" class="btn-secondary">View on GitHub →</a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">8</div>
+      <div class="stat-label">AI Agents</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">24</div>
+      <div class="stat-label">PRD Sections Generated</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">&lt;2s</div>
+      <div class="stat-label">Alert Propagation</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">99.95%</div>
+      <div class="stat-label">Availability Target</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PROBLEM ── -->
+<section id="problem">
+  <div class="container">
+    <div class="section-label">The Problem</div>
+    <h2>Fragmentation kills delivery</h2>
+    <p class="section-sub">
+      Command centers, dispatch operations, and engineering teams operate in silos.
+      The result is misalignment, rework, and operational risk.
+    </p>
+
+    <div class="problem-grid">
+      <div class="problem-cell">
+        <span class="tag-bad">HIGH IMPACT</span>
+        <div class="problem-title">Ambiguous requirements</div>
+        <div class="problem-desc">Vague Jira tickets lead to incorrect implementations and costly rework cycles.</div>
+      </div>
+      <div class="problem-cell">
+        <span class="tag-bad">HIGH IMPACT</span>
+        <div class="problem-title">Manual incident correlation</div>
+        <div class="problem-desc">Operators miss related incidents across zones, slowing response times significantly.</div>
+      </div>
+      <div class="problem-cell">
+        <span class="tag-bad">HIGH IMPACT</span>
+        <div class="problem-title">Context loss at shift handover</div>
+        <div class="problem-desc">Critical operational context evaporates between shifts, creating blind spots.</div>
+      </div>
+      <div class="problem-cell">
+        <span class="tag-bad">MEDIUM IMPACT</span>
+        <div class="problem-title">Disconnected Jira tickets</div>
+        <div class="problem-desc">Stories drift from operational reality. No traceability from incident to delivery.</div>
+      </div>
+      <div class="problem-cell">
+        <span class="tag-bad">MEDIUM IMPACT</span>
+        <div class="problem-title">Missing edge cases</div>
+        <div class="problem-desc">Untested failure modes discovered in production. No systematic gap detection.</div>
+      </div>
+      <div class="problem-cell">
+        <span class="tag-bad">MEDIUM IMPACT</span>
+        <div class="problem-title">Static PRDs</div>
+        <div class="problem-desc">Documents go stale the moment they're written. Operational reality diverges.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PILLARS ── -->
+<section id="pillars" class="pillars">
+  <div class="container">
+    <div class="section-label">Product Pillars</div>
+    <h2>Five pillars. One platform.</h2>
+    <p class="section-sub">
+      Each pillar addresses a distinct operational failure mode. Together they form
+      a unified AI reasoning layer across your entire operation.
+    </p>
+
+    <div class="pillars-grid">
+      <div class="pillar-card">
+        <div class="pillar-icon">⚡</div>
+        <div class="pillar-name">AI Operational Intelligence</div>
+        <div class="pillar-desc">Real-time incident correlation, pattern detection, and escalation intelligence.</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-icon">🔍</div>
+        <div class="pillar-name">Requirements Intelligence</div>
+        <div class="pillar-desc">Transform ambiguous Jira tickets into structured, complete, unambiguous requirements.</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-icon">🚀</div>
+        <div class="pillar-name">Delivery Intelligence</div>
+        <div class="pillar-desc">Bidirectional Jira sync that keeps operations and engineering permanently aligned.</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-icon">🎯</div>
+        <div class="pillar-name">Operational Coordination</div>
+        <div class="pillar-desc">AI copilot assistance for operators and supervisors during live incident response.</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-icon">🧠</div>
+        <div class="pillar-name">Organizational Intelligence</div>
+        <div class="pillar-desc">Persistent operational memory and contextual reasoning through a knowledge graph.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WORKFLOW ── -->
+<section id="workflow">
+  <div class="container">
+    <div class="section-label">Core Workflow</div>
+    <h2>From Jira URL to shippable stories</h2>
+    <p class="section-sub">
+      Paste a Jira epic URL. The AI pipeline handles the rest — discovery, clarification,
+      PRD generation, story decomposition, and sync back to Jira.
+    </p>
+
+    <div class="workflow-grid">
+      <div class="workflow-steps">
+        <div class="workflow-step">
+          <div class="step-num">1</div>
+          <div>
+            <div class="step-title">Jira Ingestion</div>
+            <div class="step-desc">Full ticket tree fetched via OAuth — root epic, child stories, comments, attachments (with PDF text extraction).</div>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-num">2</div>
+          <div>
+            <div class="step-title">AI Discovery — 4 Passes</div>
+            <div class="step-desc">Ambiguity scan → Missing info → Edge case gaps → Compliance gaps. Each pass builds on prior findings.</div>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-num">3</div>
+          <div>
+            <div class="step-title">PM Answer Loop</div>
+            <div class="step-desc">Ranked clarification questions surface to the PM. HIGH-severity questions are required before continuing.</div>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-num">4</div>
+          <div>
+            <div class="step-title">PRD Generation</div>
+            <div class="step-desc">24-section enterprise PRD generated section-by-section with a running decisions log to maintain coherence.</div>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-num">5</div>
+          <div>
+            <div class="step-title">Story Hierarchy</div>
+            <div class="step-desc">Initiative → Epic → Feature → Story → Task. Every story gets Given/When/Then criteria and edge cases.</div>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-num">6</div>
+          <div>
+            <div class="step-title">Jira Sync</div>
+            <div class="step-desc">Stories pushed back to Jira with rate limiting and idempotency. Webhook events keep both sides current.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dot" style="background:#ef4444"></div>
+          <div class="code-dot" style="background:#f59e0b"></div>
+          <div class="code-dot" style="background:#10b981"></div>
+          <span style="margin-left:8px">Discovery Agent — Pass 1 Output</span>
+        </div>
+        <pre><span class="c-muted">// findings[] from ambiguity scan</span>
+[
+  {
+    <span class="c-accent">"finding_type"</span>: <span class="c-green">"AMBIGUITY"</span>,
+    <span class="c-accent">"severity"</span>: <span class="c-amber">"HIGH"</span>,
+    <span class="c-accent">"source_quote"</span>: <span class="c-green">"real-time alerts"</span>,
+    <span class="c-accent">"description"</span>: <span class="c-green">"Latency not defined.
+Could mean &lt;100ms or &lt;5s."</span>,
+    <span class="c-accent">"clarification_question"</span>: <span class="c-green">"[Required] What is
+the maximum acceptable alert
+delivery latency in milliseconds?"</span>
+  },
+  {
+    <span class="c-accent">"finding_type"</span>: <span class="c-green">"MISSING_INFO"</span>,
+    <span class="c-accent">"severity"</span>: <span class="c-amber">"HIGH"</span>,
+    <span class="c-accent">"description"</span>: <span class="c-green">"Offline behavior
+undefined. Mobile field ops
+require offline-first design."</span>,
+    <span class="c-accent">"clarification_question"</span>: <span class="c-green">"[Required] Must
+alerts queue and retry when
+the device is offline?"</span>
+  }
+]</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── AGENTS ── -->
+<section id="agents" class="agents">
+  <div class="container">
+    <div class="section-label">Multi-Agent Architecture</div>
+    <h2>Specialized agents. One orchestrator.</h2>
+    <p class="section-sub">
+      Each agent is a LangGraph subgraph with defined input/output contracts,
+      retry logic, and token-cost tracking. The supervisor routes tasks based on
+      workflow state stored in PostgreSQL.
+    </p>
+
+    <div class="agents-diagram">
+<span class="c-muted">                    Orchestrator Agent (LangGraph supervisor)</span>
+<span class="c-muted">                                │</span>
+<span class="c-muted"> ┌──────────────────────────────┼──────────────────────────────┐</span>
+<span class="c-accent">Discovery Agent</span>       <span class="c-green">Incident Agent</span>       <span class="c-amber">Delivery Agent</span>
+<span class="c-muted">      │                        │                        │</span>
+<span class="c-accent">PRD Agent</span>             <span class="c-green">Handover Agent</span>        <span class="c-amber">Risk Agent</span>
+<span class="c-muted">      │                        │                        │</span>
+<span class="c-accent">Story Agent</span>           <span class="c-green">QA Agent</span>              <span class="c-amber">GIS Agent</span> <span class="c-muted">(Phase 3)</span>
+    </div>
+
+    <div class="agent-grid">
+      <div class="agent-card">
+        <div class="agent-name">DiscoveryAgent</div>
+        <div class="agent-desc">4-pass analysis: ambiguity, missing info, edge cases, compliance gaps. Generates PM clarification questions ranked by severity.</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-name">PRDAgent</div>
+        <div class="agent-desc">Section-by-section PRD synthesis with a running decisions log. Coherence review pass before marking complete. Uses Claude Opus.</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-name">StoryAgent</div>
+        <div class="agent-desc">Decomposes PRD into Initiative → Task hierarchy. Given/When/Then acceptance criteria and edge cases per story.</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-name">IncidentAgent</div>
+        <div class="agent-desc">Executive + operator incident summaries. Chronological timeline construction. Pattern detection across incident sets.</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-name">RiskAgent</div>
+        <div class="agent-desc">Scores risks by likelihood × impact across 5 types. Generates concrete mitigations. Aggregate score per entity.</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-name">HandoverAgent</div>
+        <div class="agent-desc">AI shift handover reports: unresolved incidents, active escalations, pending actions, high-risk areas for incoming shift.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STACK ── -->
+<section id="stack">
+  <div class="container">
+    <div class="section-label">Technology Stack</div>
+    <h2>Built for enterprise scale</h2>
+    <p class="section-sub">
+      Production-grade choices optimized for AI-heavy workloads, real-time events,
+      and SOC2 compliance from day one.
+    </p>
+
+    <table class="stack-table">
+      <thead>
+        <tr>
+          <th>Layer</th>
+          <th>Technology</th>
+          <th>Why</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Frontend</td>
+          <td><span class="tech-tag">Next.js 14</span> <span class="tech-tag">shadcn/ui</span> <span class="tech-tag">TanStack Query</span></td>
+          <td class="rationale">Server components for data-heavy dashboards. SSE for AI token streaming. Full component ownership.</td>
+        </tr>
+        <tr>
+          <td>API Gateway</td>
+          <td><span class="tech-tag">Fastify</span> <span class="tech-tag">Kong</span></td>
+          <td class="rationale">Zero-overhead schema validation. Kong handles rate limiting, JWT validation, and tenant routing as plugins.</td>
+        </tr>
+        <tr>
+          <td>AI Services</td>
+          <td><span class="tech-tag">Python 3.12</span> <span class="tech-tag">FastAPI</span> <span class="tech-tag">LangGraph</span></td>
+          <td class="rationale">Python-first AI ecosystem. LangGraph stateful graph execution with human-in-loop checkpoints and PostgreSQL persistence.</td>
+        </tr>
+        <tr>
+          <td>LLM</td>
+          <td><span class="tech-tag">Claude Opus 4.7</span> <span class="tech-tag">Claude Sonnet 4.6</span> <span class="tech-tag">Claude Haiku 4.5</span></td>
+          <td class="rationale">200k context for large Jira epics. Superior structured output reliability. Model tiered by task cost/complexity.</td>
+        </tr>
+        <tr>
+          <td>Databases</td>
+          <td><span class="tech-tag">Aurora PostgreSQL 16</span> <span class="tech-tag">Neo4j</span> <span class="tech-tag">Pinecone</span></td>
+          <td class="rationale">Transactional + graph + vector — each optimized for its query pattern. Pinecone serverless per-tenant namespace isolation.</td>
+        </tr>
+        <tr>
+          <td>Streaming</td>
+          <td><span class="tech-tag">Apache Kafka (MSK)</span> <span class="tech-tag">Schema Registry</span></td>
+          <td class="rationale">Ordered delivery for incident timelines. Replay for agent reprocessing. Avro schemas prevent contract drift.</td>
+        </tr>
+        <tr>
+          <td>Auth</td>
+          <td><span class="tech-tag">Auth0 Enterprise</span> <span class="tech-tag">OPA</span></td>
+          <td class="rationale">SAML/OIDC SSO out-of-the-box. OPA enforces RBAC policies at the policy engine — not in application code.</td>
+        </tr>
+        <tr>
+          <td>Infra</td>
+          <td><span class="tech-tag">AWS EKS</span> <span class="tech-tag">Terraform</span> <span class="tech-tag">ArgoCD</span></td>
+          <td class="rationale">GitOps deployment provides SOC2 change management audit trail. GovCloud regions available for public safety customers.</td>
+        </tr>
+        <tr>
+          <td>Monorepo</td>
+          <td><span class="tech-tag">Turborepo</span> <span class="tech-tag">pnpm</span> <span class="tech-tag">uv</span></td>
+          <td class="rationale">Atomic cross-service commits. Remote cache. Mixed Python/TypeScript workspace without build system lock-in.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── ROADMAP ── -->
+<section id="roadmap" style="background: var(--surface);">
+  <div class="container">
+    <div class="section-label">Roadmap</div>
+    <h2>Four phases to full autonomy</h2>
+    <p class="section-sub">
+      Each phase delivers standalone value. MVP (Phase 1) validates the core thesis
+      before expanding into command-center AI and autonomous coordination.
+    </p>
+
+    <div class="roadmap-list">
+      <div class="roadmap-phase phase-mvp">
+        <div class="phase-num">PHASE 1 · MVP</div>
+        <div>
+          <div class="phase-title">Requirements Intelligence</div>
+          <div class="phase-items">
+            <span class="phase-item">Jira ingestion</span>
+            <span class="phase-item">AI discovery (4-pass)</span>
+            <span class="phase-item">PRD generation (24 sections)</span>
+            <span class="phase-item">Story hierarchy</span>
+            <span class="phase-item">Jira bidirectional sync</span>
+            <span class="phase-item">Incident summarization</span>
+            <span class="phase-item">Operational risk detection</span>
+            <span class="phase-item">AI shift handover</span>
+          </div>
+        </div>
+      </div>
+      <div class="roadmap-phase">
+        <div class="phase-num">PHASE 2</div>
+        <div>
+          <div class="phase-title">Operational Intelligence</div>
+          <div class="phase-items">
+            <span class="phase-item">Incident correlation</span>
+            <span class="phase-item">Geographic clustering</span>
+            <span class="phase-item">Escalation intelligence</span>
+            <span class="phase-item">Operational recommendations</span>
+            <span class="phase-item">SLA breach detection</span>
+          </div>
+        </div>
+      </div>
+      <div class="roadmap-phase">
+        <div class="phase-num">PHASE 3</div>
+        <div>
+          <div class="phase-title">Command Center AI</div>
+          <div class="phase-items">
+            <span class="phase-item">Live operator copilot</span>
+            <span class="phase-item">GIS + AI fusion</span>
+            <span class="phase-item">Predictive escalation</span>
+            <span class="phase-item">Mobile AI assistants</span>
+            <span class="phase-item">Video intelligence</span>
+          </div>
+        </div>
+      </div>
+      <div class="roadmap-phase">
+        <div class="phase-num">PHASE 4</div>
+        <div>
+          <div class="phase-title">Autonomous Coordination</div>
+          <div class="phase-items">
+            <span class="phase-item">Autonomous dispatch</span>
+            <span class="phase-item">Predictive operations</span>
+            <span class="phase-item">Adaptive SOP intelligence</span>
+            <span class="phase-item">AI-driven orchestration</span>
+            <span class="phase-item">Sovereign AI (on-prem)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section id="cta" class="cta-section">
+  <div class="container">
+    <div class="cta-glow"></div>
+    <div class="section-label">Early Access</div>
+    <h2>Ready to eliminate operational fragmentation?</h2>
+    <p>Join the waitlist for early access. Built for command centers, public safety, smart cities, and enterprise operational teams.</p>
+    <div class="hero-actions">
+      <a href="mailto:pguzman@kabatone.com" class="btn-primary">Request Early Access</a>
+      <a href="https://github.com" class="btn-secondary">View on GitHub →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div>
+    <strong>K1 Intelligence Platform</strong> — AI Operational Intelligence
+  </div>
+  <div style="display:flex;gap:1.5rem;">
+    <a href="https://github.com" style="color:var(--muted);text-decoration:none;">GitHub</a>
+    <span>Built with Claude (Anthropic) · LangGraph · FastAPI · Next.js</span>
+  </div>
+</footer>
+
+</body>
+</html>
